@@ -13,5 +13,11 @@ class Waiting{
       child: Text(text),
     );
   }
+
+  static Widget circularWaiting(){
+    return Center(
+        child: CircularProgressIndicator(),
+    );
+  }
   
 }
