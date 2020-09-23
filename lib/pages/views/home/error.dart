@@ -1,7 +1,6 @@
-
 import 'package:flutter/material.dart';
 
-class Error{
+class HomeError{
 
   static Widget iconError(){
     return Center(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Waiting{
+class HomeLoading{
 
   static Widget iconWaiting(){
     return Center(

@@ -1,11 +1,8 @@
-import 'package:conversor_de_moedas/builder/builder.dart';
-import 'package:conversor_de_moedas/controller/home_controller.dart';
-import 'package:conversor_de_moedas/util/currencies.dart';
-import 'package:conversor_de_moedas/view/default.dart';
-import 'package:conversor_de_moedas/view/error.dart';
-import 'package:conversor_de_moedas/view/waiting.dart';
+import 'package:conversor_de_moedas/model/quotations.dart';
+import 'package:conversor_de_moedas/pages/views/home/content.dart';
+import 'package:conversor_de_moedas/pages/views/home/error.dart';
+import 'package:conversor_de_moedas/pages/views/home/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:conversor_de_moedas/service/api.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -13,12 +10,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  ApiRequest api = ApiRequest();
-  DefaultView view = DefaultView();
-  Currencies currencies = Currencies();
 
   @override
   Widget build(BuildContext context) {
+    List loadingStates = [ConnectionState.none, ConnectionState.waiting];
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -27,21 +23,16 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.amber,
       ),
       body: FutureBuilder(
-        future: api.getData(),
+        future: fetchQuotations(),
         builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-              return Waiting.circularWaiting();
-            default:
-              if(snapshot.hasError){
-                return Error.iconError();
-              }else{
-                currencies.setData(snapshot.data);
-                return view.interfaceSuccess(currencies);
-              }
+          if(loadingStates.contains(snapshot.connectionState)){
+            return HomeLoading.circularWaiting();
           }
-        },
+          if(snapshot.hasError){
+            return HomeError.iconError();
+          }
+          return HomeContent(snapshot.data).build();
+          },
       ),
     );
   }
